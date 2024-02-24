@@ -42,6 +42,7 @@ namespace Song_Bibliothek.Pages.Songs
                                 songInfo.artist = reader.GetString(11);
                                 songInfo.lyrics = reader.GetString(4);
                                 songInfo.year = reader.GetString(8);
+                                songInfo.fileFormat = reader.GetString(9);
 
                                 SongList.Add(songInfo);   // store the data in a list for the landing page
                             }
@@ -64,5 +65,6 @@ namespace Song_Bibliothek.Pages.Songs
         public string? artist;
         public string? year;
         public string? lyrics;
+        public string? fileFormat;
     }
 }

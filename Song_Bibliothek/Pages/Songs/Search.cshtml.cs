@@ -72,7 +72,7 @@ namespace Song_Bibliothek.Pages.Songs
                     }
 
                     // SQL query
-                    string sql = "SELECT song_title=@title FROM songs " +
+                    string sql = "SELECT * FROM songs " +
                         "WHERE song_title=@title";
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
@@ -90,7 +90,7 @@ namespace Song_Bibliothek.Pages.Songs
                 return;
             }
 
-            Response.Redirect("/Songs/Index");  // redirect to songs landing page
+            Response.Redirect("/Songs/SearchResult");  // redirect to songs search result page
         }
     }
 }
