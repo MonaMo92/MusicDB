@@ -1,0 +1,36 @@
+﻿@page
+@model Song_Bibliothek.Pages.Artists.IndexModel
+@{
+}
+
+<br>
+<h2>Artists</h2>
+<a class="btn btn-primary btn-sm" href="/Artists/Create">New Artist</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Year</th>
+            <th>Origin</th>
+            <th>Genre</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ArtistsList)
+    {
+        <tr>
+            <td>@item.id</td>
+            <td>@item.name</td>
+            <td>@item.year</td>
+            <td>@item.origin</td>
+            <td>@item.genre</td>
+            <td>
+                    <a class="btn btn-primary btn-sm" href="/Artists/Edit?title=@item.title">Edit</a>
+                    <a class="btn btn-danger btn-sm" href="/Artists/Delete?title=@item.title">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

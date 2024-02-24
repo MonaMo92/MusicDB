@@ -1,0 +1,41 @@
+﻿@page
+@model Song_Bibliothek.Pages.Songs.IndexModel
+@{
+}
+
+<br>
+<h2>Songs</h2>
+<a class="btn btn-primary btn-sm" href="/Songs/Create">New Song</a>
+<a class="btn btn-primary btn-sm" href="/Songs/Search">Search Song</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Artist</th>
+            <th>Album</th>
+            <th>Track</th>
+            <th>Year</th>
+            <th>Lyrics</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model.SongList)
+    {
+        <tr>
+            <td>@item.id</td>
+            <td>@item.title</td>
+            <td>@item.artist</td>
+            <td>@item.album</td>
+            <td>@item.track</td>
+            <td>@item.year</td>
+            <td>@item.lyrics</td>
+            <td>
+                <a class="btn btn-primary btn-sm" href="/Songs/Edit?title=@item.title">Edit</a>
+                <a class="btn btn-danger btn-sm" href="/Songs/Delete?title=@item.title">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

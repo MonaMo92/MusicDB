@@ -1,0 +1,83 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using MySql.Data.MySqlClient;
+using System.Data.SqlClient;
+
+namespace Song_Bibliothek.Pages.Songs
+{
+    public class CreateModel : PageModel
+    {
+        public SongInfo songInfo = new SongInfo();
+        public string errorMessage = "";
+        public string successMessage = "";
+        
+        public void OnGet()
+        {
+        }
+
+        public void OnPost() 
+        {
+            // save the data entered by the user
+            songInfo.title = Request.Form["title"];
+            songInfo.artist = Request.Form["artist"];
+            songInfo.album = Request.Form["album"];
+            songInfo.track = Request.Form["track"];
+            songInfo.year = Request.Form["year"];
+            songInfo.lyrics = Request.Form["lyrics"];
+
+            // check whether all fields have content
+            if (songInfo.title.Length == 0 || songInfo.artist.Length == 0 || songInfo.lyrics.Length == 0
+                || songInfo.album.Length == 0 || songInfo.track.Length == 0 || songInfo.year.Length == 0)
+            {
+                errorMessage = "Please enter all of the fields";
+                return;
+            }
+
+            // save the data in the database
+            try
+            {
+                string connectionString = "server=localhost;uid=root;pwd=root;database=musicdb";    // data source
+
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    if (connection.State == System.Data.ConnectionState.Closed)
+                    {
+                        connection.Open();  // open SQL connection, if it's not open already
+                    }
+
+                    // SQL query
+                    string sql = "INSERT INTO songs (album_id, song_title, track, lyrics)" +
+                        "VALUES(@album, @title, @track, @lyrics);";
+
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        // add the data to the command
+                        command.Parameters.AddWithValue("@title", songInfo.title);
+                        command.Parameters.AddWithValue("@artist", songInfo.artist);
+                        command.Parameters.AddWithValue("@album", songInfo.album);
+                        command.Parameters.AddWithValue("@track", songInfo.track);
+                        command.Parameters.AddWithValue("@year", songInfo.year);
+                        command.Parameters.AddWithValue("@lyrics", songInfo.lyrics);
+
+                        command.ExecuteNonQuery();  // execute the SQL query
+                    }
+                }
+            }
+            catch(Exception ex)
+            { 
+                errorMessage = ex.Message;
+                return;
+            }
+
+            songInfo.title = "";
+            songInfo.artist = "";
+            songInfo.album = "";
+            songInfo.track = "";
+            songInfo.year = "";
+            songInfo.lyrics = "";
+            successMessage = "New Song added";
+
+            Response.Redirect("/Songs/Index");  // redirect to songs landing page
+        }
+    }
+}
