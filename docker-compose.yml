@@ -1,0 +1,9 @@
+version: '3.4'
+
+services:
+  song_bibliothek:
+    container_name: search
+    image: ${DOCKER_REGISTRY-}songbibliothek
+    build:
+      context: .
+      dockerfile: Song_Bibliothek/Dockerfile
