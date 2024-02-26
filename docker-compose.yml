@@ -7,3 +7,5 @@ services:
     build:
       context: .
       dockerfile: Song_Bibliothek/Dockerfile
+    ports:
+      - "8080:80"
