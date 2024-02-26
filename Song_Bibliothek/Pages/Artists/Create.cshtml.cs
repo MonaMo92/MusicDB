@@ -41,9 +41,41 @@ namespace Song_Bibliothek.Pages.Artists
                         connection.Open();  // open SQL connection, if it's not open already
                     }
 
+
+                    //Check if table has values
+                    string stmt = "SELECT COUNT(*) FROM genre";
+                    int count = 0;
+
+                    using (MySqlCommand cmd = new MySqlCommand(stmt, connection))
+                    {
+                        count = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+
+                    //Check if genre exists
+                    string sqlgenre = "SELECT genre_id FROM genre WHERE genre_name = @genre";
+                    bool genreID = false;
+
+                    using (MySqlCommand cmd = new MySqlCommand(sqlgenre, connection))
+                    {
+                        genreID = cmd.Parameters.Contains("@genre");
+                    }
+
                     // SQL query
-                    string sql = "INSERT INTO artists (artist_name, year, origin, genre)" +
+                    string sql = "";
+
+                    if (count == 0 || !genreID)
+                    {
+                        sql = "INSERT INTO genre (genre_name)" +
+                            "VALUES (@genre);" +
+                            "INSERT INTO artists (artist_name, year, origin, genre)" +
+                            "VALUES (@name, @year, @origin, (SELECT genre_id FROM genre WHERE genre_name = @genre))";
+                    }
+                    else
+                    {
+                        sql = "INSERT INTO artists (artist_name, year, origin, genre)" +
                         "VALUES (@name, @year, @origin, (SELECT genre_id FROM genre WHERE genre_name = @genre))";
+                    }    
+                    
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
