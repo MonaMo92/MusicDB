@@ -22,13 +22,27 @@ namespace Song_Bibliothek.Pages.Songs
                     }
 
                     // SQL query
-                    string sql = "SELECT * FROM songs " +
+                    string title = Request.Query["title"];
+                    string sql;
+                    if (!string.IsNullOrEmpty(title))
+                    {
+                        sql = "SELECT * FROM songs " +
+                        "JOIN album ON album.album_id = songs.album_id " +
+                        "JOIN artists ON album.artist_id = artists.artist_id " +
+                        "WHERE song_title=@title";
+                    }
+                    else
+                    {
+                        sql = "SELECT * FROM songs " +
                         "JOIN album ON album.album_id = songs.album_id " +
                         "JOIN artists ON album.artist_id = artists.artist_id";
+                    }
 
                     // execute the SQL query
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
+                        command.Parameters.AddWithValue("@title", title);
+
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())

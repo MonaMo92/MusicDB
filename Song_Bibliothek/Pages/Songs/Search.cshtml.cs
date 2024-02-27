@@ -90,7 +90,7 @@ namespace Song_Bibliothek.Pages.Songs
                 return;
             }
 
-            Response.Redirect("/Songs/Index");  // redirect to songs landing page
+            Response.Redirect("/Songs/Index?title=" + songInfo.title);  // redirect to songs landing page
         }
     }
 }

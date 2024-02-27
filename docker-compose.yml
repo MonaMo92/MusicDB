@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   song_bibliothek:
-    container_name: search
+    container_name: search_container
     image: ${DOCKER_REGISTRY-}songbibliothek
     build:
       context: .
