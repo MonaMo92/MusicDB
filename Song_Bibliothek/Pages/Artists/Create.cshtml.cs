@@ -52,18 +52,18 @@ namespace Song_Bibliothek.Pages.Artists
                     }
 
                     //Check if genre exists
-                    string sqlgenre = "SELECT genre_id FROM genre WHERE genre_name = @genre";
-                    bool genreID = false;
+                    stmt = "SELECT COUNT(*) FROM genre WHERE genre_name = '" + artistInfo.genre + "'";
+                    int genreCount = 0;
 
-                    using (MySqlCommand cmd = new MySqlCommand(sqlgenre, connection))
+                    using (MySqlCommand cmd = new MySqlCommand(stmt, connection))
                     {
-                        genreID = cmd.Parameters.Contains("@genre");
+                        genreCount = Convert.ToInt32(cmd.ExecuteScalar());
                     }
 
                     // SQL query
                     string sql = "";
 
-                    if (count == 0 || !genreID)
+                    if (count == 0 || genreCount == 0)
                     {
                         sql = "INSERT INTO genre (genre_name)" +
                             "VALUES (@genre);" +
