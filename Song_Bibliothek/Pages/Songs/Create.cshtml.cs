@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
+using Song_Bibliothek.Pages.Album;
+using Song_Bibliothek.Pages.Artists;
 
 namespace Song_Bibliothek.Pages.Songs
 {
@@ -8,6 +10,8 @@ namespace Song_Bibliothek.Pages.Songs
     {
 
         public SongInfo songInfo = new SongInfo();
+        public ArtistInfo artistInfo = new ArtistInfo();
+        public AlbumInfo albumInfo = new AlbumInfo();
         public string errorMessage = "";
         public string successMessage = "";
         
@@ -48,9 +52,19 @@ namespace Song_Bibliothek.Pages.Songs
                         connection.Open();  // open SQL connection, if it's not open already
                     }
 
+                    int albumID = 0;
+                    string stmt = "SELECT album_id FROM album WHERE album_title = 'I Dont´t Like Metal, I Love It'"; //"SELECT album_id FROM album WHERE album_title = 'I Don´t Like Metal, I Love It'"
+                                                                                                                     //"SELECT album_id FROM album WHERE album_title = 'I Dont´t Like Metal, I Love It'"
+                    using (MySqlCommand cmd = new MySqlCommand(stmt, connection))
+                    {
+                        albumID = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+
                     // SQL query
                     string sql = "INSERT INTO songs (album_id, song_title, track, lyrics, file_format, data)" +
-                        "VALUES(@album, @title, @track, @lyrics, @file_format, @data);";
+                        "VALUES((SELECT album_id FROM album WHERE album_title = '" + songInfo.album + "'), '" + 
+                        songInfo.title + "', '" + songInfo.track + "', '" +
+                        songInfo.lyrics + "', '" + songInfo.fileFormat + "', @data)";
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
@@ -87,6 +101,7 @@ namespace Song_Bibliothek.Pages.Songs
 
         public void GetMetaData(string file)
         {
+            //Recieve request
             var mp3File = Request.Form.Files["file"];
 
             string filePath = "";
@@ -97,38 +112,62 @@ namespace Song_Bibliothek.Pages.Songs
                 return;
             }
 
+            //Create file for server to save
             filePath = Path.Combine(Path.Combine(Directory.GetCurrentDirectory(), "AudioFiles"), mp3File.FileName);
 
             songInfo.fileFormat = filePath;
 
+
+            //Get Metadata from file
+            var metaData = TagLib.File.Create(filePath);
+
+            songInfo.title = metaData.Tag.Title;
+            songInfo.artist = metaData.Tag.AlbumArtists.FirstOrDefault();
+            songInfo.album = metaData.Tag.Album;
+            songInfo.year = metaData.Tag.Year.ToString();
+            songInfo.track = metaData.Tag.Track.ToString();
+
+            string replaceTitle = songInfo.title.Replace("'", "´");
+            string replaceAlbum = songInfo.album.Replace("'", "´");
+            string replaceLyrics = songInfo.lyrics.Replace("'", "´");
+            string replaceArtist = songInfo.artist.Replace("'", "´");
+            string replaceFileFormat = songInfo.fileFormat.Replace("'", "´");
+
+            songInfo.title = replaceTitle;
+            songInfo.artist = replaceArtist;
+            songInfo.album = replaceAlbum;
+            songInfo.lyrics = replaceLyrics;
+            songInfo.fileFormat = replaceFileFormat;
+
+            //artistInfo.name = metaData.Tag.AlbumArtists.FirstOrDefault();
+            //artistInfo.title = metaData.Tag.Title;
+            //artistInfo.genre = metaData.Tag.Genres.FirstOrDefault();
+            //artistInfo.year = metaData.Tag.Year.ToString();
+            //artistInfo.origin = "Unknown";
+            //albumInfo.title = metaData.Tag.Album;
+            //albumInfo.year = metaData.Tag.Year.ToString();
+            //albumInfo.artist = metaData.Tag.AlbumArtists.FirstOrDefault();
+            //albumInfo.label = metaData.Tag.Publisher;
+
+
             try
             {
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                //Copy file for application to use
+                using (var fileStreamCreate = new FileStream(songInfo.fileFormat, FileMode.Create))
                 {
-                    mp3File.CopyTo(fileStream);
+                    mp3File.CopyTo(fileStreamCreate);
                 }
 
-                string connectionString = "server=localhost;uid=root;pwd=root;database=musicdb";    // data source
+                if (mp3File == null || mp3File.Length == 0)
+                    return;
 
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
-                {
-                    if (connection.State == System.Data.ConnectionState.Closed)
-                    {
-                        connection.Open();  // open SQL connection, if it's not open already
-                    }
+                //Convert to byte to save in database
+                var fileStreamOpen = new FileStream(songInfo.fileFormat, FileMode.Open);
 
-                    if (mp3File == null || mp3File.Length == 0)
-                        return;
+                songInfo.data = new byte[fileStreamOpen.Length];
 
+                fileStreamOpen.Read(songInfo.data, 0, (int)fileStreamOpen.Length);
 
-                    FileStream fileStream = new FileStream(filePath, FileMode.Open);
-
-                    songInfo.data = new byte[fileStream.Length];
-
-                    fileStream.Read(songInfo.data, 0, (int)fileStream.Length);
-
-                }
             }
             catch (Exception ex)
             {
