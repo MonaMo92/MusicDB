@@ -66,5 +66,6 @@ namespace Song_Bibliothek.Pages.Songs
         public string? year;
         public string? lyrics;
         public string? fileFormat;
+        public byte[]? data;
     }
 }
