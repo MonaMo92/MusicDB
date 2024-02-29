@@ -15,7 +15,7 @@ namespace Song_Bibliothek.Pages.Songs
         {
             try
             {
-                string connectionString = "server=localhost;uid=root;pwd=root;database=musicdb";
+                string connectionString = "server=host.docker.internal;uid=root;pwd=root;database=musicdb";
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     if (connection.State == System.Data.ConnectionState.Closed)

@@ -11,7 +11,7 @@ namespace Song_Bibliothek.Pages.Songs
         public SongInfo songInfo = new SongInfo();
         public string errorMessage = "";
         public string successMessage = "";
-        private string connectionString = "server=localhost;uid=root;pwd=root;database=musicdb";
+        private string connectionString = "server=host.docker.internal;uid=root;pwd=root;database=musicdb";
         public void OnGet()
         {
             string id = Request.Query["song_id"];
