@@ -37,7 +37,10 @@
                 <a class="btn btn-danger btn-sm" href="/Songs/Delete?title=@item.title">Delete</a>
             </td>
             <td>
-                <a class="btn btn-primary btn-sm" asp-page-handler="ButtonClicked">Play</a>
+                <audio controls>
+                    <source src="@Model.AudioPath" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
             </td>
         </tr>
     }

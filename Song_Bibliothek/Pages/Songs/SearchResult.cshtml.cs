@@ -1,23 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
-using System.Media;
-using System.Reflection.PortableExecutable;
 
 namespace Song_Bibliothek.Pages.Songs
 {
     public class SearchResultModel : PageModel
     {
         public List<SongInfo> SongList = new List<SongInfo>();
-        public string title;
-        public SoundPlayer sound;
         public Dictionary<string, string> songs;
+        public string title;
+        public string AudioPath { get; set; }
 
         public void OnGet()
         {
             try
             {
-                string connectionString = "server=host.docker.internal;uid=root;pwd=root;database=musicdb";
+                string connectionString = "server=localhost;uid=root;pwd=root;database=musicdb";
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     if (connection.State == System.Data.ConnectionState.Closed)
@@ -37,17 +35,17 @@ namespace Song_Bibliothek.Pages.Songs
 
                     songs = new Dictionary<string, string>
                     {
-                        { "Song 1", "~/Songs/American Idiot.mp3" },
-                        { "Song 2", "~/Songs/Chop Suey.mp3" },
-                        { "Song 3", "~/Songs/Fly Away.mp3" },
-                        { "Song 4", "~/Songs/Hit The Floor.mp3" },
-                        { "Song 5", "~/Songs/I Dont Like Metal.mp3" },
-                        { "Song 6", "~/Songs/Lost In Hollywood.mp3" },
-                        { "Song 7", "~/Songs/Radio Video.mp3" },
-                        { "Song 8", "~/Songs/Runaway.mp3" },
-                        { "Song 9", "~/Songs/Tears Dont Fall.mp3" },
-                        { "The Kill", "~/Songs/The Kill.mp3" },
-                        { "Song 11", "~/Songs/Wessi Girl.mp3" }
+                        { "American Idiot", "~/Songs/American Idiot.mp3" },
+                        { "Chop Suey", "~/Songs/Chop Suey.mp3" },
+                        { "Fly Away", "~/Songs/Fly Away.mp3" },
+                        { "Hit The Floor", "~/Songs/Hit The Floor.mp3" },
+                        { "I Dont Like Metal", "~/Songs/I Dont Like Metal.mp3" },
+                        { "Lost In Hollywood", "~/Songs/Lost In Hollywood.mp3" },
+                        { "Radio Video", "~/Songs/Radio Video.mp3" },
+                        { "Runaway", "~/Songs/Runaway.mp3" },
+                        { "Tears Don't Fall", "~/Songs/Tears Dont Fall.mp3" },
+                        { "The Kill", "./Songs/The Kill.mp3" },
+                        { "Wessi Girl", "~/Songs/Wessi Girl.mp3" }
                     };
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
@@ -68,11 +66,6 @@ namespace Song_Bibliothek.Pages.Songs
                                 songInfo.year = reader.GetString(8);
 
                                 SongList.Add(songInfo);
-                                /*foreach(var song in songs)
-                                {
-                                    if(song.Key == songInfo.title)
-                                        songTitle = new SoundPlayer(songInfo.title);
-                                }*/
                             }
                         }
                     }
@@ -82,21 +75,22 @@ namespace Song_Bibliothek.Pages.Songs
             {
                 Console.WriteLine("Exception: " + ex.ToString());
             }
-            OnPostButtonClicked();
+            Index();
         }
-        public IActionResult OnPostButtonClicked()
+
+        public IActionResult Index()
         {
-            foreach(var song in songs)
+            string audioPath = "";
+            
+            foreach (var song in songs)
             {
-                if(song.Key == title)
+                if (song.Key == title)
                 {
-
+                    audioPath = song.Value;
+                    AudioPath = audioPath;
                 }
-
             }
-            //if(sound != null)
-                //sound.Play();
-            return Content("Play song");
+            return Content(audioPath);
         }
     }
 }
