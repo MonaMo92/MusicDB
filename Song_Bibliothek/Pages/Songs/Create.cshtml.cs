@@ -17,7 +17,6 @@ namespace Song_Bibliothek.Pages.Songs
 
         public void OnPost() 
         {
-            // save the data entered by the user
             songInfo.title = Request.Form["title"];
             songInfo.artist = Request.Form["artist"];
             songInfo.album = Request.Form["album"];
@@ -25,7 +24,6 @@ namespace Song_Bibliothek.Pages.Songs
             songInfo.year = Request.Form["year"];
             songInfo.lyrics = Request.Form["lyrics"];
 
-            // check whether all fields have content
             if (songInfo.title.Length == 0 || songInfo.artist.Length == 0 || songInfo.lyrics.Length == 0
                 || songInfo.album.Length == 0 || songInfo.track.Length == 0 || songInfo.year.Length == 0)
             {
@@ -33,25 +31,22 @@ namespace Song_Bibliothek.Pages.Songs
                 return;
             }
 
-            // save the data in the database
             try
             {
-                string connectionString = "server=localhost;uid=root;pwd=root;database=musicdb";    // data source
+                string connectionString = "server=host.docker.internal;uid=root;pwd=root;database=musicdb";
 
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     if (connection.State == System.Data.ConnectionState.Closed)
                     {
-                        connection.Open();  // open SQL connection, if it's not open already
+                        connection.Open();
                     }
 
-                    // SQL query
                     string sql = "INSERT INTO songs (album_id, song_title, track, lyrics)" +
                         "VALUES(@album, @title, @track, @lyrics);";
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        // add the data to the command
                         command.Parameters.AddWithValue("@title", songInfo.title);
                         command.Parameters.AddWithValue("@artist", songInfo.artist);
                         command.Parameters.AddWithValue("@album", songInfo.album);
@@ -59,7 +54,7 @@ namespace Song_Bibliothek.Pages.Songs
                         command.Parameters.AddWithValue("@year", songInfo.year);
                         command.Parameters.AddWithValue("@lyrics", songInfo.lyrics);
 
-                        command.ExecuteNonQuery();  // execute the SQL query
+                        command.ExecuteNonQuery();
                     }
                 }
             }
@@ -77,7 +72,7 @@ namespace Song_Bibliothek.Pages.Songs
             songInfo.lyrics = "";
             successMessage = "New Song added";
 
-            Response.Redirect("/Songs/Index");  // redirect to songs landing page
+            Response.Redirect("/Songs/Index");
         }
     }
 }

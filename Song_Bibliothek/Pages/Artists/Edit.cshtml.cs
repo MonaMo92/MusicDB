@@ -11,7 +11,7 @@ namespace Song_Bibliothek.Pages.Artists
         public ArtistInfo artistInfo = new ArtistInfo();
         public string errorMessage = "";
         public string successMessage = "";
-        private string connectionString = "server=localhost;uid=root;pwd=root;database=musicdb";    // data source
+        private string connectionString = "server=host.docker.internal;uid=root;pwd=root;database=musicdb";
         public void OnGet()
         {
             string id = Request.Query["artist_id"];
@@ -22,10 +22,9 @@ namespace Song_Bibliothek.Pages.Artists
                 {
                     if (connection.State == System.Data.ConnectionState.Closed)
                     {
-                        connection.Open();  // open SQL connection, if it's not open already
+                        connection.Open();
                     }
 
-                    // SQL query
                     string sql = "SELECT * FROM artists";
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
@@ -34,7 +33,6 @@ namespace Song_Bibliothek.Pages.Artists
                         {
                             if (reader.Read())
                             {
-                                // add the data to their objects
                                 ArtistInfo artistInfo = new ArtistInfo();
                                 artistInfo.id = "" + reader.GetInt32(0);
                                 artistInfo.name = reader.GetString(1);
@@ -54,14 +52,12 @@ namespace Song_Bibliothek.Pages.Artists
 
         public void OnPost()
         {
-            // save the data entered by the user
             artistInfo.id = Request.Query["id"];
             artistInfo.name = Request.Form["name"];
             artistInfo.year = Request.Form["year"];
             artistInfo.origin = Request.Form["origin"];
             artistInfo.genre = Request.Form["genre"];
 
-            // check whether all fields have content
             if (artistInfo.name.Length == 0 || artistInfo.year.Length == 0
                 || artistInfo.origin.Length == 0 || artistInfo.genre.Length == 0)
             {
@@ -75,10 +71,9 @@ namespace Song_Bibliothek.Pages.Artists
                 {
                     if (connection.State == System.Data.ConnectionState.Closed)
                     {
-                        connection.Open();  // open SQL connection, if it's not open already
+                        connection.Open();
                     }
 
-                    // SQL query
                     string sql = "UPDATE artists " +
                         "SET artist_name=@name, year=@year, origin=@origin, genre=(SELECT genre_id FROM genre WHERE genre_name = @genre) " +
                         "WHERE artist_name=@name";
@@ -91,7 +86,7 @@ namespace Song_Bibliothek.Pages.Artists
                         command.Parameters.AddWithValue("@origin", artistInfo.origin);
                         command.Parameters.AddWithValue("@genre", artistInfo.genre);
 
-                        command.ExecuteNonQuery();  // execute the SQL query
+                        command.ExecuteNonQuery();
                     }
                 }
             }
@@ -101,7 +96,7 @@ namespace Song_Bibliothek.Pages.Artists
                 return;
             }
 
-            Response.Redirect("/Artists/Index");  // redirect to artists landing page
+            Response.Redirect("/Artists/Index");
         }
     }
 }

@@ -11,28 +11,25 @@ namespace Song_Bibliothek.Pages.Artists
         {
             try
             {
-                string connectionString = "server=localhost;uid=root;pwd=root;database=musicdb";    // data source
+                string connectionString = "server=host.docker.internal;uid=root;pwd=root;database=musicdb";
 
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     if (connection.State == System.Data.ConnectionState.Closed)
                     {
-                        connection.Open();  // open SQL connection, if it's not open already
+                        connection.Open();
                     }
 
-                    // SQL query
                     string sql = "SELECT * FROM artists " +
                         "JOIN genre ON genre.genre_id = artists.genre " +
                         "ORDER BY artists.artist_id";
 
-                    // execute the SQL query
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                // add the data to their objects
                                 ArtistInfo artistInfo = new ArtistInfo();
                                 artistInfo.id = "" + reader.GetInt32(0);
                                 artistInfo.name = reader.GetString(1);
@@ -40,7 +37,7 @@ namespace Song_Bibliothek.Pages.Artists
                                 artistInfo.origin = reader.GetString(3);
                                 artistInfo.genre = reader.GetString(6);
 
-                                ArtistsList.Add(artistInfo);   // store the data in a list for the landing page
+                                ArtistsList.Add(artistInfo);
                             }
                         }
                     }
