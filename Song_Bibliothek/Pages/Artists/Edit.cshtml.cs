@@ -1,8 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
-using System.Data.SqlClient;
-using System.Reflection.PortableExecutable;
 
 namespace Song_Bibliothek.Pages.Artists
 {
