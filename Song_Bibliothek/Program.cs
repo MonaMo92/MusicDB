@@ -1,7 +1,10 @@
+using Song_Bibliothek;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddScoped<IID3Service, ID3Service>();
 
 var app = builder.Build();
 

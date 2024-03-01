@@ -5,8 +5,9 @@ using Song_Bibliothek.Pages.Songs;
 
 namespace Song_Bibliothek
 {
-    public class ID3Service
+    public class ID3Service : IID3Service
     {
+
         public SongInfo GetMetaDataSong(HttpRequest request, SongInfo songInfo)
         {
             try

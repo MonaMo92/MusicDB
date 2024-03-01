@@ -7,11 +7,17 @@ namespace Song_Bibliothek.Pages.Songs
 {
     public class CreateModel : PageModel
     {
-        private ID3Service? _id3Service;
+        private readonly IID3Service _id3Service;
         public SongInfo songInfo = new SongInfo();
         public string errorMessage = "";
         public string successMessage = "";
         
+        public CreateModel(IID3Service iD3Service) 
+        {
+            _id3Service = iD3Service;
+        }
+
+
         public void OnGet()
         {
         }
@@ -19,8 +25,6 @@ namespace Song_Bibliothek.Pages.Songs
         public void OnPost()
         {
             songInfo.lyrics = Request.Form["lyrics"];
-
-            _id3Service = new ID3Service();
 
             _id3Service.GetMetaDataSong(Request, songInfo);
 
