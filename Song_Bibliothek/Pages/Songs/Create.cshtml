@@ -15,37 +15,14 @@
     </div>
 }
 
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
     <div class="row mb-3">
-        <label class="col-sm-3 col-form-label">Title</label>
+        <label class="col-sm-3 col-form-label">MP3-File</label>
         <div class="col-sm-6">
-            <input type="text" class="form-control" name="title" value="@Model.songInfo.title">
+            <input type="file" class="form-control" name="file" accept=".mp3" required>
         </div>
     </div>
-    <div class="row mb-3">
-        <label class="col-sm-3 col-form-label">Artist</label>
-        <div class="col-sm-6">
-            <input type="text" class="form-control" name="artist" value="@Model.songInfo.artist">
-        </div>
-    </div>
-    <div class="row mb-3">
-        <label class="col-sm-3 col-form-label">Album</label>
-        <div class="col-sm-6">
-            <input type="text" class="form-control" name="album" value="@Model.songInfo.album">
-        </div>
-    </div>
-    <div class="row mb-3">
-        <label class="col-sm-3 col-form-label">Track</label>
-        <div class="col-sm-6">
-            <input type="text" class="form-control" name="track" value="@Model.songInfo.track">
-        </div>
-    </div>
-    <div class="row mb-3">
-        <label class="col-sm-3 col-form-label">Year</label>
-        <div class="col-sm-6">
-            <input type="text" class="form-control" name="year" value="@Model.songInfo.year">
-        </div>
-    </div>
+    
     <div class="row mb-3">
         <label class="col-sm-3 col-form-label">Lyrics</label>
         <div class="col-sm-6">

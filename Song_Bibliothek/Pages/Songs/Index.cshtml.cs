@@ -32,12 +32,13 @@ namespace Song_Bibliothek.Pages.Songs
                             {
                                 SongInfo songInfo = new SongInfo();
                                 songInfo.id = "" + reader.GetInt32(0);
-                                songInfo.album = reader.GetString(7);
+                                songInfo.album = reader.GetString(9);
                                 songInfo.title = reader.GetString(2);
                                 songInfo.track = reader.GetString(3);
-                                songInfo.artist = reader.GetString(11);
+                                songInfo.artist = reader.GetString(13);
                                 songInfo.lyrics = reader.GetString(4);
-                                songInfo.year = reader.GetString(8);
+                                songInfo.year = reader.GetString(14);
+                                songInfo.fileFormat = reader.GetString(6);
 
                                 SongList.Add(songInfo);
                             }
@@ -61,5 +62,7 @@ namespace Song_Bibliothek.Pages.Songs
         public string? artist;
         public string? year;
         public string? lyrics;
+        public string? fileFormat;
+        public byte[]? data;
     }
 }
