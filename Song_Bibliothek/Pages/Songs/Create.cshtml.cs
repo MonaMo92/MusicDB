@@ -20,19 +20,7 @@ namespace Song_Bibliothek.Pages.Songs
 
         public void OnPost() 
         {
-            songInfo.title = Request.Form["title"];
-            songInfo.artist = Request.Form["artist"];
-            songInfo.album = Request.Form["album"];
-            songInfo.track = Request.Form["track"];
-            songInfo.year = Request.Form["year"];
             songInfo.lyrics = Request.Form["lyrics"];
-
-            if (songInfo.title.Length == 0 || songInfo.artist.Length == 0 || songInfo.lyrics.Length == 0
-                || songInfo.album.Length == 0 || songInfo.track.Length == 0 || songInfo.year.Length == 0)
-            {
-                errorMessage = "Please enter all of the fields";
-                return;
-            }
             
             GetMetaData();
 
@@ -65,9 +53,6 @@ namespace Song_Bibliothek.Pages.Songs
                         successMessage = "Song already in List";
 
                         Thread.Sleep(1000);
-
-                        //Response.Redirect("/Songs/Index");  // redirect to songs landing page
-
                         return;
                     }
 
@@ -143,17 +128,6 @@ namespace Song_Bibliothek.Pages.Songs
             songInfo.lyrics = replaceLyrics;
             songInfo.fileFormat = replaceFileFormat;
 
-            //artistInfo.name = metaData.Tag.AlbumArtists.FirstOrDefault();
-            //artistInfo.title = metaData.Tag.Title;
-            //artistInfo.genre = metaData.Tag.Genres.FirstOrDefault();
-            //artistInfo.year = metaData.Tag.Year.ToString();
-            //artistInfo.origin = "Unknown";
-            //albumInfo.title = metaData.Tag.Album;
-            //albumInfo.year = metaData.Tag.Year.ToString();
-            //albumInfo.artist = metaData.Tag.AlbumArtists.FirstOrDefault();
-            //albumInfo.label = metaData.Tag.Publisher;
-
-
             try
             {
                 //Copy file for application to use
@@ -177,7 +151,6 @@ namespace Song_Bibliothek.Pages.Songs
             {
                 NotFound(ex.Message);
             }
-
         }
     }
 }
