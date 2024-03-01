@@ -8,7 +8,7 @@ namespace Song_Bibliothek.Pages.Artists
         public ArtistInfo artistInfo = new ArtistInfo();
         public string errorMessage = "";
         public string successMessage = "";
-        private string connectionString = "server=localhost;uid=root;pwd=root;database=musicdb";    // data source
+        private string connectionString = "server=host.docker.internal;uid=root;pwd=root;database=musicdb";
 
         public void OnGet()
         {
@@ -20,10 +20,9 @@ namespace Song_Bibliothek.Pages.Artists
                 {
                     if (connection.State == System.Data.ConnectionState.Closed)
                     {
-                        connection.Open();  // open SQL connection, if it's not open already
+                        connection.Open();
                     }
 
-                    // SQL query
                     string sql = "SELECT * FROM artists";
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
@@ -32,7 +31,6 @@ namespace Song_Bibliothek.Pages.Artists
                         {
                             if (reader.Read())
                             {
-                                // add the data to their objects
                                 ArtistInfo artistInfo = new ArtistInfo();
                                 artistInfo.name = reader.GetString(1);
                                 artistInfo.year = reader.GetString(2);
@@ -51,11 +49,9 @@ namespace Song_Bibliothek.Pages.Artists
         {
             try
             {
-                // save the data entered by the user
                 artistInfo.name = Request.Form["name"];
                 artistInfo.year = Request.Form["year"];
 
-                // check whether all fields have content
                 if (artistInfo.name.Length == 0 || artistInfo.year.Length == 0)
                 {
                     errorMessage = "Please enter all of the fields";
@@ -66,20 +62,18 @@ namespace Song_Bibliothek.Pages.Artists
                 {
                     if (connection.State == System.Data.ConnectionState.Closed)
                     {
-                        connection.Open();  // open SQL connection, if it's not open already
+                        connection.Open();
                     }
 
-                    // SQL query
                     string sql = "DELETE FROM artists " +
                                  "WHERE artist_name=@name AND year=@year";
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        // add the data to the command
                         command.Parameters.AddWithValue("@name", artistInfo.name);
                         command.Parameters.AddWithValue("@year", artistInfo.year);
 
-                        command.ExecuteNonQuery();  // execute the SQL query
+                        command.ExecuteNonQuery();
                     }
                 }
             }
@@ -93,7 +87,7 @@ namespace Song_Bibliothek.Pages.Artists
             artistInfo.year = "";
             successMessage = "Artist deleted";
 
-            Response.Redirect("/Artists/Index");  // redirect to arists landing page
+            Response.Redirect("/Artists/Index");
         }
     }
 }

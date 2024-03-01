@@ -1,0 +1,25 @@
+version: '3.4'
+
+services:
+  song_bibliothek:
+    container_name: search_container
+    image: ${DOCKER_REGISTRY-}songbibliothek
+    build:
+      context: .
+      dockerfile: Song_Bibliothek/Dockerfile
+    ports:
+      - "8001:80"
+    depends_on:
+      - database
+
+  database:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    container_name: sql_server
+    environment:
+      - ACCEPT_EULA=y
+      - MSSQL_SA_PASSWORD=e65e2709-9b47-44dc-a0f8-780830ff000f
+      - MSQL_PID=Express
+    restart: always
+    ports:
+      - "1433:1433"
+    network_mode: "host"

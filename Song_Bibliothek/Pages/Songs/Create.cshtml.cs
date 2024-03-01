@@ -20,22 +20,37 @@ namespace Song_Bibliothek.Pages.Songs
 
         public void OnPost() 
         {
-            // save the data entered by the user
+            songInfo.title = Request.Form["title"];
+            songInfo.artist = Request.Form["artist"];
+            songInfo.album = Request.Form["album"];
+            songInfo.track = Request.Form["track"];
+            songInfo.year = Request.Form["year"];
             songInfo.lyrics = Request.Form["lyrics"];
+
+            if (songInfo.title.Length == 0 || songInfo.artist.Length == 0 || songInfo.lyrics.Length == 0
+                || songInfo.album.Length == 0 || songInfo.track.Length == 0 || songInfo.year.Length == 0)
+            {
+                errorMessage = "Please enter all of the fields";
+                return;
+            }
             
             GetMetaData();
 
-            // save the data in the database
             try
             {
-                string connectionString = "server=localhost;uid=root;pwd=root;database=musicdb";    // data source
+                string connectionString = "server=host.docker.internal;uid=root;pwd=root;database=musicdb";
 
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     if (connection.State == System.Data.ConnectionState.Closed)
                     {
-                        connection.Open();  // open SQL connection, if it's not open already
+                        connection.Open();
                     }
+
+                    string sql = "INSERT INTO songs (album_id, song_title, track, lyrics, file_format, data)" +
+                        "VALUES((SELECT album_id FROM album WHERE album_title = '" + songInfo.album + "'), '" + 
+                        songInfo.title + "', '" + songInfo.track + "', '" +
+                        songInfo.lyrics + "', '" + songInfo.fileFormat + "', @data)";
 
                     int songCount = 0;
                     string stmt = "SELECT COUNT(*) FROM songs Where song_title = '" + songInfo.title + "'"; 
@@ -56,15 +71,8 @@ namespace Song_Bibliothek.Pages.Songs
                         return;
                     }
 
-                    // SQL query
-                    string sql = "INSERT INTO songs (album_id, song_title, track, lyrics, file_format, data)" +
-                        "VALUES((SELECT album_id FROM album WHERE album_title = '" + songInfo.album + "'), '" + 
-                        songInfo.title + "', '" + songInfo.track + "', '" +
-                        songInfo.lyrics + "', '" + songInfo.fileFormat + "', @data)";
-
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        // add the data to the command
                         command.Parameters.AddWithValue("@title", songInfo.title);
                         command.Parameters.AddWithValue("@artist", songInfo.artist);
                         command.Parameters.AddWithValue("@album", songInfo.album);
@@ -74,7 +82,7 @@ namespace Song_Bibliothek.Pages.Songs
                         command.Parameters.AddWithValue("@file_format", songInfo.fileFormat);
                         command.Parameters.AddWithValue("@data", songInfo.data);
 
-                        command.ExecuteNonQuery();  // execute the SQL query
+                        command.ExecuteNonQuery();
                     }
                 }
             }
@@ -92,7 +100,7 @@ namespace Song_Bibliothek.Pages.Songs
             songInfo.lyrics = "";
             successMessage = "New Song added";
 
-            Response.Redirect("/Songs/Index");  // redirect to songs landing page
+            Response.Redirect("/Songs/Index");
         }
 
         public void GetMetaData()
@@ -123,11 +131,11 @@ namespace Song_Bibliothek.Pages.Songs
             songInfo.year = metaData.Tag.Year.ToString() ?? "Unknown";
             songInfo.track = metaData.Tag.Track.ToString() ?? "Unknown";
 
-            string replaceTitle = songInfo.title.Replace("'", "´");
-            string replaceAlbum = songInfo.album.Replace("'", "´");
-            string replaceLyrics = songInfo.lyrics.Replace("'", "´");
-            string replaceArtist = songInfo.artist.Replace("'", "´");
-            string replaceFileFormat = songInfo.fileFormat.Replace("'", "´");
+            string replaceTitle = songInfo.title.Replace("'", "Â´");
+            string replaceAlbum = songInfo.album.Replace("'", "Â´");
+            string replaceLyrics = songInfo.lyrics.Replace("'", "Â´");
+            string replaceArtist = songInfo.artist.Replace("'", "Â´");
+            string replaceFileFormat = songInfo.fileFormat.Replace("'", "Â´");
 
             songInfo.title = replaceTitle;
             songInfo.artist = replaceArtist;

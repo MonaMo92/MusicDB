@@ -8,7 +8,7 @@ namespace Song_Bibliothek.Pages.Songs
         public SongInfo songInfo = new SongInfo();
         public string errorMessage = "";
         public string successMessage = "";
-        private string connectionString = "server=localhost;uid=root;pwd=root;database=musicdb";    // data source
+        private string connectionString = "server=host.docker.internal;uid=root;pwd=root;database=musicdb";
 
         public void OnGet()
         {
@@ -20,10 +20,9 @@ namespace Song_Bibliothek.Pages.Songs
                 {
                     if (connection.State == System.Data.ConnectionState.Closed)
                     {
-                        connection.Open();  // open SQL connection, if it's not open already
+                        connection.Open();
                     }
 
-                    // SQL query
                     string sql = "SELECT * FROM songs";
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
@@ -32,7 +31,6 @@ namespace Song_Bibliothek.Pages.Songs
                         {
                             if (reader.Read())
                             {
-                                // add the data to their objects
                                 SongInfo songInfo = new SongInfo();
                                 songInfo.id = "" + reader.GetInt32(0);
                                 songInfo.album = reader.GetString(1);
@@ -53,13 +51,11 @@ namespace Song_Bibliothek.Pages.Songs
         {
             try
             {
-                // save the data entered by the user
                 songInfo.id = Request.Query["id"];
                 songInfo.album = Request.Form["album"];
                 songInfo.title = Request.Form["title"];
                 songInfo.track = Request.Form["track"];
 
-                // check whether all fields have content
                 if (songInfo.title.Length == 0 || songInfo.album.Length == 0 || songInfo.track.Length == 0)
                 {
                     errorMessage = "Please enter all of the fields";
@@ -70,10 +66,9 @@ namespace Song_Bibliothek.Pages.Songs
                 {
                     if (connection.State == System.Data.ConnectionState.Closed)
                     {
-                        connection.Open();  // open SQL connection, if it's not open already
+                        connection.Open();
                     }
 
-                    // SQL query
                     string sql = "DELETE FROM songs " +
                                  "WHERE album_id=(SELECT album_id FROM album WHERE album_title = @album) " +
                                  "AND song_title=@title " +
@@ -81,12 +76,11 @@ namespace Song_Bibliothek.Pages.Songs
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        // add the data to the command
                         command.Parameters.AddWithValue("@album", songInfo.album);
                         command.Parameters.AddWithValue("@title", songInfo.title);
                         command.Parameters.AddWithValue("@track", Convert.ToInt32(songInfo.track));
 
-                        command.ExecuteNonQuery();  // execute the SQL query
+                        command.ExecuteNonQuery();
                     }
                 }
             }
@@ -101,7 +95,7 @@ namespace Song_Bibliothek.Pages.Songs
             songInfo.track = "";
             successMessage = "Song deleted";
 
-            Response.Redirect("/Songs/Index");  // redirect to songs landing page
+            Response.Redirect("/Songs/Index");
         }
     }
 }

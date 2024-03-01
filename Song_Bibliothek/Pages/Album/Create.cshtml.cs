@@ -15,13 +15,11 @@ namespace Song_Bibliothek.Pages.Album
 
         public void OnPost() 
         {
-            // save the data entered by the user
             albumInfo.artist = Request.Form["artist"];
             albumInfo.title = Request.Form["title"];
             albumInfo.year = Request.Form["year"];
             albumInfo.label = Request.Form["label"];
 
-            // check whether all fields have content
             if (albumInfo.artist.Length == 0 || albumInfo.title.Length == 0
                 || albumInfo.year.Length == 0 || albumInfo.label.Length == 0)
             {
@@ -32,13 +30,13 @@ namespace Song_Bibliothek.Pages.Album
             // save the data in the database
             try
             {
-                string connectionString = "server=localhost;uid=root;pwd=root;database=musicdb";    // data source
+                string connectionString = "server=host.docker.internal;uid=root;pwd=root;database=musicdb";
 
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     if (connection.State == System.Data.ConnectionState.Closed)
                     {
-                        connection.Open();  // open SQL connection, if it's not open already
+                        connection.Open();
                     }
 
                     // SQL query
@@ -50,13 +48,12 @@ namespace Song_Bibliothek.Pages.Album
                     
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        // add the data to the command
                         command.Parameters.AddWithValue("@artist", albumInfo.artist);
                         command.Parameters.AddWithValue("@title", albumInfo.title);
                         command.Parameters.AddWithValue("@year", albumInfo.year);
                         command.Parameters.AddWithValue("@label", albumInfo.label);
 
-                        command.ExecuteNonQuery();  // execute the SQL query
+                        command.ExecuteNonQuery();
                     }
                 }
             }
@@ -72,7 +69,7 @@ namespace Song_Bibliothek.Pages.Album
             albumInfo.label = "";
             successMessage = "New Album added";
 
-            Response.Redirect("/Album/Index");  // redirect to album landing page
+            Response.Redirect("/Album/Index");
         }
     }
 }

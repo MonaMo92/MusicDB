@@ -15,13 +15,11 @@ namespace Song_Bibliothek.Pages.Artists
 
         public void OnPost() 
         {
-            // save the data entered by the user
             artistInfo.name = Request.Form["name"];
             artistInfo.year = Request.Form["year"];
             artistInfo.origin = Request.Form["origin"];
             artistInfo.genre = Request.Form["genre"];
 
-            // check whether all fields have content
             if (artistInfo.name.Length == 0 || artistInfo.year.Length == 0
                 || artistInfo.origin.Length == 0 || artistInfo.genre.Length == 0)
             {
@@ -29,20 +27,17 @@ namespace Song_Bibliothek.Pages.Artists
                 return;
             }
 
-            // save the data in the database
             try
             {
-                string connectionString = "server=localhost;uid=root;pwd=root;database=musicdb";    // data source
+                string connectionString = "server=host.docker.internal;uid=root;pwd=root;database=musicdb";
 
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     if (connection.State == System.Data.ConnectionState.Closed)
                     {
-                        connection.Open();  // open SQL connection, if it's not open already
+                        connection.Open();
                     }
 
-
-                    //Check if table has values
                     string stmt = "SELECT COUNT(*) FROM genre";
                     int count = 0;
 
@@ -73,19 +68,19 @@ namespace Song_Bibliothek.Pages.Artists
                     else
                     {
                         sql = "INSERT INTO artists (artist_name, year, origin, genre)" +
+
                         "VALUES (@name, @year, @origin, (SELECT genre_id FROM genre WHERE genre_name = @genre))";
                     }    
                     
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        // add the data to the command
                         command.Parameters.AddWithValue("@name", artistInfo.name);
                         command.Parameters.AddWithValue("@year", artistInfo.year);
                         command.Parameters.AddWithValue("@origin", artistInfo.origin);
                         command.Parameters.AddWithValue("@genre", artistInfo.genre);
 
-                        command.ExecuteNonQuery();  // execute the SQL query
+                        command.ExecuteNonQuery();
                     }
                 }
             }
@@ -101,7 +96,7 @@ namespace Song_Bibliothek.Pages.Artists
             artistInfo.genre = "";
             successMessage = "New Artist added";
 
-            Response.Redirect("/Artists/Index");  // redirect to artists landing page
+            Response.Redirect("/Artists/Index");
         }
     }
 }

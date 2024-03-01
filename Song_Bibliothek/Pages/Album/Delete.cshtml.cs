@@ -8,7 +8,7 @@ namespace Song_Bibliothek.Pages.Album
         public AlbumInfo albumInfo = new AlbumInfo();
         public string errorMessage = "";
         public string successMessage = "";
-        private string connectionString = "server=localhost;uid=root;pwd=root;database=musicdb";    // data source
+        private string connectionString = "server=host.docker.internal;uid=root;pwd=root;database=musicdb";    // data source
 
         public void OnGet()
         {
