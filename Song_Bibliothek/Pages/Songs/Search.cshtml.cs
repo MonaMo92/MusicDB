@@ -74,6 +74,8 @@ namespace Song_Bibliothek.Pages.Songs
                         command.ExecuteNonQuery();
                     }
                 }
+
+                Response.Redirect("/Songs/SearchResult?title=" + songInfo.title);
             }
             catch (Exception ex)
             {
@@ -81,7 +83,7 @@ namespace Song_Bibliothek.Pages.Songs
                 return;
             }
 
-            Response.Redirect("/Songs/SearchResult?title=" + songInfo.title);
+            
         }
     }
 }

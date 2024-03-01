@@ -23,3 +23,14 @@ services:
     ports:
       - "1433:1433"
     network_mode: "host"
+
+  songadd:
+    container_name: add_song
+    image: ${DOCKER_REGISTRY-}songadd
+    build:
+        context: .
+        dockerfile: Song_Bibliothek/Dockerfile
+    ports:
+        - "8002:80"
+    depends_on:
+        - database
