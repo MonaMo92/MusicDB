@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
+using NAudio.Wave;
 
 namespace Song_Bibliothek.Pages.Songs
 {
@@ -35,17 +36,17 @@ namespace Song_Bibliothek.Pages.Songs
 
                     songs = new Dictionary<string, string>
                     {
-                        { "American Idiot", "Song_Bibliothek/Song_Bibliothek/Tracks/American Idiot.mp3" },
-                        { "Chop Suey", "Song_Bibliothek/Song_Bibliothek/Tracks/Chop Suey.mp3" },
-                        { "Fly Away", "Song_Bibliothek/Song_Bibliothek/Tracks/Fly Away.mp3" },
-                        { "Hit The Floor", "Song_Bibliothek/Song_Bibliothek/Tracks/Hit The Floor.mp3" },
-                        { "I Dont Like Metal", "Song_Bibliothek/Song_Bibliothek/Tracks/I Dont Like Metal.mp3" },
-                        { "Lost In Hollywood", "Song_Bibliothek/Song_Bibliothek/Tracks/Lost In Hollywood.mp3" },
-                        { "Radio Video", "Song_Bibliothek/Song_Bibliothek/Tracks/Radio Video.mp3" },
-                        { "Runaway", "Song_Bibliothek/Song_Bibliothek/Tracks/Runaway.mp3" },
-                        { "Tears Don't Fall", "Song_Bibliothek/Song_Bibliothek/Tracks/Tears Dont Fall.mp3" },
-                        { "The Kill", "Song_Bibliothek/Song_Bibliothek/Tracks/The Kill.mp3" },
-                        { "Wessi Girl", "Song_Bibliothek/Song_Bibliothek/Tracks/Wessi Girl.mp3" }
+                        { "American Idiot", "Tracks/American Idiot.mp3" },
+                        { "Chop Suey", "Tracks/Chop Suey.mp3" },
+                        { "Fly Away", "Tracks/Fly Away.mp3" },
+                        { "Hit The Floor", "Tracks/Hit The Floor.mp3" },
+                        { "I Dont Like Metal", "Tracks/I Dont Like Metal.mp3" },
+                        { "Lost In Hollywood", "Tracks/Lost In Hollywood.mp3" },
+                        { "Radio Video", "Tracks/Radio Video.mp3" },
+                        { "Runaway", "Tracks/Runaway.mp3" },
+                        { "Tears Don't Fall", "Tracks/Tears Dont Fall.mp3" },
+                        { "The Kill", "Tracks/The Kill.mp3" },
+                        { "Wessi Girl", "Tracks/Wessi Girl.mp3" }
                     };
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
@@ -95,8 +96,41 @@ namespace Song_Bibliothek.Pages.Songs
                     AudioPath = audioPath;
                 }
             }
-            
-            return base.File(audioPath, "audio/mp3");
+
+            // funktioniert theoretisch, aber der Pfad wird aus unbekannten Gründen nicht erkannt, daher kann die Audiodatei nicht abgespielt werden
+            /*byte[] mpegAudioBytes = ConvertMp3ToMpeg(audioPath);
+
+            if (mpegAudioBytes != null)
+                return File(mpegAudioBytes, "audio/mpeg", "converted_audio.mpeg");
+            else
+            {
+                return BadRequest("Konvertierung fehlgeschlagen.");
+            }*/
+
+            return Content(audioPath);
+        }
+
+        private byte[] ConvertMp3ToMpeg(string mp3FilePath)
+        {
+            using (var mp3Reader = new Mp3FileReader(mp3FilePath))
+            {
+                using (var mpegStream = new MemoryStream())
+                {
+                    var waveFormat = new WaveFormat(44100, 2);
+                    using (var mpegWriter = new WaveFileWriter(mpegStream, waveFormat))
+                    {
+                        var buffer = new byte[4096];
+                        int bytesRead;
+
+                        while ((bytesRead = mp3Reader.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            mpegWriter.Write(buffer, 0, bytesRead);
+                        }
+                    }
+
+                    return mpegStream.ToArray();
+                }
+            }
         }
     }
 }
