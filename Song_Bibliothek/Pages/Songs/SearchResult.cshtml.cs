@@ -95,8 +95,8 @@ namespace Song_Bibliothek.Pages.Songs
                     AudioPath = audioPath;
                 }
             }
-            var result = Content(audioPath,"audio/mp3");
-            return result;
+            
+            return base.File(audioPath, "audio/mp3");
         }
     }
 }
