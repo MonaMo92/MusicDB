@@ -35,17 +35,17 @@ namespace Song_Bibliothek.Pages.Songs
 
                     songs = new Dictionary<string, string>
                     {
-                        { "American Idiot", "~/Songs/American Idiot.mp3" },
-                        { "Chop Suey", "~/Songs/Chop Suey.mp3" },
-                        { "Fly Away", "~/Songs/Fly Away.mp3" },
-                        { "Hit The Floor", "~/Songs/Hit The Floor.mp3" },
-                        { "I Dont Like Metal", "~/Songs/I Dont Like Metal.mp3" },
-                        { "Lost In Hollywood", "~/Songs/Lost In Hollywood.mp3" },
-                        { "Radio Video", "~/Songs/Radio Video.mp3" },
-                        { "Runaway", "~/Songs/Runaway.mp3" },
-                        { "Tears Don't Fall", "~/Songs/Tears Dont Fall.mp3" },
-                        { "The Kill", "./Songs/The Kill.mp3" },
-                        { "Wessi Girl", "~/Songs/Wessi Girl.mp3" }
+                        { "American Idiot", "Song_Bibliothek/Song_Bibliothek/Tracks/American Idiot.mp3" },
+                        { "Chop Suey", "Song_Bibliothek/Song_Bibliothek/Tracks/Chop Suey.mp3" },
+                        { "Fly Away", "Song_Bibliothek/Song_Bibliothek/Tracks/Fly Away.mp3" },
+                        { "Hit The Floor", "Song_Bibliothek/Song_Bibliothek/Tracks/Hit The Floor.mp3" },
+                        { "I Dont Like Metal", "Song_Bibliothek/Song_Bibliothek/Tracks/I Dont Like Metal.mp3" },
+                        { "Lost In Hollywood", "Song_Bibliothek/Song_Bibliothek/Tracks/Lost In Hollywood.mp3" },
+                        { "Radio Video", "Song_Bibliothek/Song_Bibliothek/Tracks/Radio Video.mp3" },
+                        { "Runaway", "Song_Bibliothek/Song_Bibliothek/Tracks/Runaway.mp3" },
+                        { "Tears Don't Fall", "Song_Bibliothek/Song_Bibliothek/Tracks/Tears Dont Fall.mp3" },
+                        { "The Kill", "Song_Bibliothek/Song_Bibliothek/Tracks/The Kill.mp3" },
+                        { "Wessi Girl", "Song_Bibliothek/Song_Bibliothek/Tracks/Wessi Girl.mp3" }
                     };
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
@@ -78,6 +78,11 @@ namespace Song_Bibliothek.Pages.Songs
             Index();
         }
 
+        public enum ContentType
+        {
+            mp3
+        }
+
         public IActionResult Index()
         {
             string audioPath = "";
@@ -90,7 +95,8 @@ namespace Song_Bibliothek.Pages.Songs
                     AudioPath = audioPath;
                 }
             }
-            return Content(audioPath);
+            var result = Content(audioPath,"audio/mp3");
+            return result;
         }
     }
 }
